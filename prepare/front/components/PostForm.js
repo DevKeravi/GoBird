@@ -1,23 +1,27 @@
 import { Button, Input } from "antd";
 import Form from "antd/lib/form/Form";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import useInput from "../hooks/useInput";
 import { addPost } from "../reducers/post";
 
 const PostForm = () => {
-  const { imagePaths } = useSelector((state) => state.post);
-  const [text, setText] = useState("");
+  const { imagePaths, addPostDone } = useSelector((state) => state.post);
+  const [text, onChangeText, setText] = useInput("");
   const imageInput = useRef();
   const dispatch = useDispatch();
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.current]);
-  const onChangeText = useCallback((e) => {
-    setText(e.target.value);
-  }, []);
+
+  useEffect(() => {
+    if (addPostDone) {
+      setText("");
+    }
+  }, [addPostDone]);
   const onSubmit = useCallback(() => {
-    dispatch(addPost);
-  }, []);
+    dispatch(addPost(text));
+  }, [text]);
   return (
     <Form
       style={{ margin: "10px 0 20px" }}
@@ -34,7 +38,7 @@ const PostForm = () => {
         <input type="file" multiple hidden ref={imageInput} />
         <Button onClick={onClickImageUpload}>이미지 업로드</Button>
         <Button type="primary" style={{ float: "right" }} htmlType="submit">
-          짹짹
+          트윗
         </Button>
       </div>
       <div>
