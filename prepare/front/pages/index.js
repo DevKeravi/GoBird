@@ -24,7 +24,6 @@ const Home = () => {
         document.documentElement.scrollHeight - 300
       ) {
         if (hasMorePosts && !loadPostsLoading) {
-          console.log(loadPostsLoading);
           dispatch({
             type: LOAD_POSTS_REQUEST,
           });
