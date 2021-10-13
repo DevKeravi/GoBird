@@ -26,16 +26,15 @@ import {
 } from "../reducers/user";
 
 function logInAPI(data) {
-  return axios.post("/api/login", data);
+  return axios.post("/user/login", data);
 }
 
 function* logIn(action) {
   try {
-    yield delay(1000);
-    //const result = yield call(logInAPI, action.data);
+    const result = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -45,13 +44,12 @@ function* logIn(action) {
   }
 }
 function logOutAPI() {
-  return axios.post("/api/logout");
+  return axios.post("/user/logout");
 }
 
 function* logOut() {
   try {
-    yield delay(1000);
-    //const result = yield call(logOutAPI);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
     });
@@ -64,16 +62,14 @@ function* logOut() {
 }
 
 function signUpAPI(data) {
-  return axios.post("/api/signup", data);
+  return axios.post("/user", data);
 }
 
 function* signUp(action) {
   try {
-    yield delay(1000);
-    //const result = yield call(singUpAPI,action.data);
+    const result = yield call(signUpAPI, action.data);
     yield put({
       type: SIGN_UP_SUCCESS,
-      data: action.data,
     });
   } catch (err) {
     yield put({

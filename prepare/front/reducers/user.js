@@ -135,11 +135,12 @@ const reducer = (state = initialState, action) => {
       case LOG_IN_SUCCESS:
         draft.logInLoading = false;
         draft.logInDone = true;
-        draft.me = dummyUser(action.data);
+        draft.me = action.data;
         break;
       case LOG_IN_FAILURE:
         draft.logInLoading = false;
         draft.isLoggedIn = false;
+        draft.logInError = action.error;
         draft.me = null;
         break;
       case LOG_OUT_REQUEST:
@@ -157,18 +158,18 @@ const reducer = (state = initialState, action) => {
         draft.logOutError = action.error;
         break;
       case SIGN_UP_REQUEST:
-        draft.signupLoading = true;
-        draft.signupError = null;
-        draft.signupDone = false;
+        draft.signUpLoading = true;
+        draft.signUpError = null;
+        draft.signUpDone = false;
         break;
       case SIGN_UP_SUCCESS:
-        draft.signupLoading = false;
-        draft.signupDone = true;
+        draft.signUpLoading = false;
+        draft.signUpDone = true;
         draft.me = null;
         break;
       case SIGN_UP_FAILURE:
-        draft.signupLoading = false;
-        draft.signupError = action.error;
+        draft.signUpLoading = false;
+        draft.signUpError = action.error;
         break;
       case CHANGE_NICKNAME_REQUEST:
         draft.changeNicknameLoading = true;
