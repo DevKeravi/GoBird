@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
+const postsRouter = require("./routes/posts");
 const db = require("./models");
 const app = express();
 const passportConfig = require("./passport");
@@ -9,6 +10,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const dotenv = require("dotenv");
+const morgan = require("morgan");
 
 dotenv.config();
 db.sequelize
@@ -18,6 +20,7 @@ db.sequelize
   })
   .catch(console.error);
 
+app.use(morgan("dev"));
 app.use(
   cors({
     origin: true,
@@ -36,11 +39,13 @@ app.use(
     secret: process.env.COOKIE_SECRET,
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/user", userRouter);
 app.use("/post", postRouter);
+app.use("/posts", postsRouter);
 
 app.listen(3065, () => {
   console.log("서버 실행 중");

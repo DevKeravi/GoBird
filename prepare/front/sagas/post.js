@@ -31,9 +31,6 @@ function addPostAPI(data) {
 function removePostAPI(data) {
   return axios.delete("/post", data);
 }
-function loadPostAPI(data) {
-  return axios.get("/post", data);
-}
 
 function* addPost(action) {
   try {
@@ -53,15 +50,20 @@ function* addPost(action) {
     });
   }
 }
+
+function loadPostsAPI(data) {
+  return axios.get("/posts", data);
+}
+//TODO
 function* loadPosts(action) {
   try {
-    yield delay(1000);
-    // const result = yield call(loadPostAPI);
+    const result = yield call(loadPostsAPI, action.data);
     yield put({
       type: LOAD_POSTS_SUCCESS,
-      data: generateDummyPost(10),
+      data: result.data,
     });
   } catch (err) {
+    console.log(err);
     yield put({
       type: LOAD_POSTS_FAILURE,
       error: err.response.data,
@@ -82,6 +84,7 @@ function* removePost(action) {
       data: action.data,
     });
   } catch (err) {
+    console.log(err);
     yield put({
       type: REMOVE_POST_FAILURE,
       error: err.response.data,
@@ -102,6 +105,7 @@ function* addComment(action) {
       data: result.data,
     });
   } catch (err) {
+    console.log(err);
     yield put({
       type: ADD_COMMENT_FAILURE,
       error: err.response.data,
