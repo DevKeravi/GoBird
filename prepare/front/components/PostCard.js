@@ -13,17 +13,30 @@ import PostImages from "./PostImages";
 import { useCallback, useState } from "react";
 import CommentForm from "./CommentForm";
 import PostCardContent from "./PostCardContent";
-import { REMOVE_POST_REQUEST } from "../reducers/post";
+import {
+  LIKE_POST_REQUEST,
+  REMOVE_POST_REQUEST,
+  UNLIKE_POST_REQUEST,
+} from "../reducers/post";
 import FollowButton from "./FollowButton";
 
 const PostCard = ({ post }) => {
-  const [liked, setLiked] = useState(false);
   const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   //OptionalChaining
   const id = useSelector((state) => state.user.me?.id);
-  const onToggleLike = useCallback(() => {
-    setLiked((prev) => !prev);
+  const liked = post.Likers.find((v) => v.id === id);
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
+  const onUnlike = useCallback(() => {
+    dispatch({
+      type: UNLIKE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
   const onToggleCommnet = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
@@ -37,21 +50,20 @@ const PostCard = ({ post }) => {
     });
   });
   return (
-    <div style={{ marginBottom: 10 }}>
+    <div style={{ marginBottom: 20 }}>
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <RetweetOutlined key="retweet" />,
-
           <MessageOutlined key="commnet" onClick={onToggleCommnet} />,
           liked ? (
             <HeartTwoTone
               twoToneColor="#eb2f96"
               key="heart"
-              onClick={onToggleLike}
+              onClick={onUnlike}
             />
           ) : (
-            <HeartOutlined key="heart" onClick={onToggleLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <Popover
             key="more"
@@ -116,6 +128,7 @@ PostCard.propTypes = {
     createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
+    Likers: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
 };
 export default PostCard;
