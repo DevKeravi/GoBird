@@ -21,7 +21,7 @@ db.sequelize
 app.use(
   cors({
     origin: true,
-    credentials: false,
+    credentials: true,
   })
 );
 
