@@ -1,13 +1,5 @@
-import {
-  all,
-  fork,
-  takeLatest,
-  delay,
-  put,
-  call,
-} from "@redux-saga/core/effects";
+import { all, fork, takeLatest, put, call } from "@redux-saga/core/effects";
 import axios from "axios";
-import shortid from "shortid";
 import {
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
@@ -21,18 +13,23 @@ import {
   LOAD_POSTS_REQUEST,
   LOAD_POSTS_SUCCESS,
   LOAD_POSTS_FAILURE,
-  generateDummyPost,
   UNLIKE_POST_REQUEST,
   LIKE_POST_REQUEST,
   LIKE_POST_SUCCESS,
   LIKE_POST_FAILURE,
   UNLIKE_POST_SUCCESS,
   UNLIKE_POST_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
+  RETWEET_REQUEST,
+  RETWEET_SUCCESS,
+  RETWEET_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
 function addPostAPI(data) {
-  return axios.post("/post", { content: data });
+  return axios.post("/post", data);
 }
 
 function* addPost(action) {
@@ -54,13 +51,12 @@ function* addPost(action) {
   }
 }
 
-function loadPostsAPI(data) {
-  return axios.get("/posts", data);
+function loadPostsAPI(lastId) {
+  return axios.get(`/posts?lastId=${lastId || 0}`);
 }
-//TODO
 function* loadPosts(action) {
   try {
-    const result = yield call(loadPostsAPI, action.data);
+    const result = yield call(loadPostsAPI, action.lastId);
     yield put({
       type: LOAD_POSTS_SUCCESS,
       data: result.data,
@@ -92,6 +88,44 @@ function* removePost(action) {
     console.log(err);
     yield put({
       type: REMOVE_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+function retweetAPI(data) {
+  return axios.post(`/post/${data}/retweet`, data);
+}
+
+function* retweet(action) {
+  try {
+    const result = yield call(retweetAPI, action.data);
+    yield put({
+      type: RETWEET_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.log(err);
+    yield put({
+      type: RETWEET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+function uploadImagesAPI(data) {
+  return axios.post("/post/images", data);
+}
+
+function* uploadImages(action) {
+  try {
+    const result = yield call(uploadImagesAPI, action.data);
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.log(err);
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
       error: err.response.data,
     });
   }
@@ -174,13 +208,21 @@ function* watchRemovePost() {
 function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
+function* watchRetweet() {
+  yield takeLatest(RETWEET_REQUEST, retweet);
+}
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
     fork(watchRemovePost),
+    fork(watchUploadImages),
     fork(watchAddComment),
     fork(watchLoadPosts),
     fork(watchLikePost),
     fork(watchUnlikePost),
+    fork(watchRetweet),
   ]);
 }

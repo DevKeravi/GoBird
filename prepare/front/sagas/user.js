@@ -1,11 +1,4 @@
-import {
-  all,
-  fork,
-  takeLatest,
-  put,
-  delay,
-  call,
-} from "@redux-saga/core/effects";
+import { all, fork, takeLatest, put, call } from "@redux-saga/core/effects";
 import axios from "axios";
 import {
   LOG_IN_FAILURE,
@@ -257,6 +250,7 @@ function* watchLoadFollowings() {
 function* watchRemoveFollower() {
   yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
+
 export default function* userSaga() {
   yield all([
     fork(watchLoadFollowers),

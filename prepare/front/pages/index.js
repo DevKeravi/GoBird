@@ -12,6 +12,7 @@ const Home = () => {
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
     (state) => state.post
   );
+  const { retweetError } = useSelector((state) => state.post);
   useEffect(() => {
     dispatch({
       type: LOAD_POSTS_REQUEST,
@@ -20,6 +21,11 @@ const Home = () => {
       type: LOAD_MY_INFO_REQUEST,
     });
   }, []);
+  useEffect(() => {
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
 
   useEffect(() => {
     function onScroll() {
@@ -28,8 +34,10 @@ const Home = () => {
         document.documentElement.scrollHeight - 300
       ) {
         if (hasMorePosts && !loadPostsLoading) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
           dispatch({
             type: LOAD_POSTS_REQUEST,
+            lastId,
           });
         }
       }
