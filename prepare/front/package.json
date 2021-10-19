@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next -p 3000",
+    "dev": "NODE_OPTIONS='--inspect' next -p 3000",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Keravi",
@@ -13,6 +13,7 @@
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.8.6",
     "axios": "^0.22.0",
+    "babel-plugin-styled-components": "^1.13.3",
     "faker": "^5.5.3",
     "immer": "^9.0.6",
     "next": "^9.5.5",

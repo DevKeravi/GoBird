@@ -31,6 +31,9 @@ import {
   REMOVE_FOLLOWER_REQUEST,
   REMOVE_FOLLOWER_SUCCESS,
   REMOVE_FOLLOWER_FAILURE,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_FAILURE,
+  LOAD_USER_REQUEST,
 } from "../reducers/user";
 
 function logInAPI(data) {
@@ -199,6 +202,26 @@ function* unfollow(action) {
     });
   }
 }
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`);
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.log(err);
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function changeNicknameAPI(data) {
   return axios.patch("/user/nickname", { nickname: data });
 }
@@ -250,6 +273,9 @@ function* watchLoadFollowings() {
 function* watchRemoveFollower() {
   yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
 
 export default function* userSaga() {
   yield all([
@@ -263,5 +289,6 @@ export default function* userSaga() {
     fork(watchLoadMyInfo),
     fork(watchChangeNickname),
     fork(watchRemoveFollower),
+    fork(watchLoadUser),
   ]);
 }
