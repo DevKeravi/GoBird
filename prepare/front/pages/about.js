@@ -8,10 +8,11 @@ import { LOAD_USER_REQUEST } from "../reducers/user";
 import { Card } from "antd";
 
 const About = () => {
-  const { userInfo } = useSelector((state) => state.user);
+  return <div>추후에 제공될 예정입니다.</div>;
 
-  return (
-    <>
+  /*
+	return (
+		<>
       <AppLayout>
         <Head>
           <title>케라비 | GoBird</title>
@@ -44,17 +45,11 @@ const About = () => {
       </AppLayout>
     </>
   );
+  */
 };
-export const getStaticProps = wrapper.getStaticProps(
+export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
-    async ({ req, res }) => {
-      store.dispatch({
-        type: LOAD_USER_REQUEST,
-        data: 1,
-      });
-      store.dispatch(END);
-      await store.sagaTask.toPromise();
-    }
+    async ({ req, res }) => {}
 );
 
 export default About;
