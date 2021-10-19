@@ -6,6 +6,9 @@ import LoginForm from "./LoginForm";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
+import useInput from "../hooks/useInput";
+import { useCallback } from "react";
+import { useRouter } from "next/router";
 
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
@@ -25,7 +28,13 @@ const Global = createGlobalStyle`
 `;
 
 const AppLayout = ({ children }) => {
+  const [searchInput, onChangeSearchInput] = useInput("");
   const { me } = useSelector((state) => state.user);
+  const Router = useRouter();
+
+  const onSearch = useCallback(() => {
+    Router.push(`/hashtag/${searchInput}`);
+  }, [searchInput]);
 
   return (
     <div>
@@ -43,7 +52,12 @@ const AppLayout = ({ children }) => {
             </Link>
           </Menu.Item>
           <Menu.Item>
-            <SearchInput enterButton />
+            <SearchInput
+              enterButton
+              value={searchInput}
+              onChange={onChangeSearchInput}
+              onSearch={onSearch}
+            />
           </Menu.Item>
           <Menu.Item>
             <Link href="/signup">

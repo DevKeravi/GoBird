@@ -7,65 +7,6 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlwares");
 
 const router = express.Router();
 
-router.get("/:userId/posts", async (req, res, next) => {
-  // GET /user/1/posts
-  try {
-    let where = { UserId: req.params.userId };
-    if (parseInt(req.query.lastId, 10)) {
-      //초기 로딩이 아닐때
-      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
-    }
-    const posts = await Post.findAll({
-      where,
-      limit: 10,
-      order: [
-        ["createdAt", "DESC"],
-        [Comment, "createdAt", "DESC"],
-      ],
-      include: [
-        {
-          model: User,
-          attributes: ["id", "nickname"],
-        },
-        {
-          model: Image,
-        },
-        {
-          model: Comment,
-          include: [
-            {
-              model: User,
-              attributes: ["id", "nickname"],
-            },
-          ],
-        },
-        {
-          model: User, // 좋아요 누른 사람
-          as: "Likers",
-          attributes: ["id"],
-        },
-        {
-          model: Post,
-          as: "Retweet",
-          include: [
-            {
-              model: User,
-              attributes: ["id", "nickname"],
-            },
-            {
-              model: Image,
-            },
-          ],
-        },
-      ],
-    });
-    res.status(200).json(posts);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
 router.get("/", async (req, res, next) => {
   // GET /user
 
@@ -97,48 +38,6 @@ router.get("/", async (req, res, next) => {
       res.status(200).json(fullUserWithoutPassword);
     } else {
       res.status(200).json(null);
-    }
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-router.get("/:userId", async (req, res, next) => {
-  // GET /user/1
-
-  try {
-    const fullUserWithoutPassword = await User.findOne({
-      where: { id: req.params.userId },
-      attributes: {
-        exclude: ["password"],
-      },
-      include: [
-        {
-          model: Post,
-          attributes: ["id"],
-        },
-        {
-          model: User,
-          as: "Followings",
-          attributes: ["id"],
-        },
-        {
-          model: User,
-          as: "Followers",
-          attributes: ["id"],
-        },
-      ],
-    });
-
-    if (fullUserWithoutPassword) {
-      const data = fullUserWithoutPassword.toJSON();
-      data.Posts = data.Posts.length;
-      data.Followers = data.Followers.length;
-      data.Followings = data.Followings.length;
-      res.status(200).json(data);
-    } else {
-      res.status(404).json("존재하지 않는 사용자 입니다.");
     }
   } catch (error) {
     console.error(error);
@@ -240,7 +139,9 @@ router.get("/followers", isLoggedIn, async (req, res, next) => {
     if (!user) {
       res.status(403).send("없는 사람을 팔로우 하려고 계시네요.");
     }
-    const followers = await user.getFollowers();
+    const followers = await user.getFollowers({
+      limit: parseInt(req.query.limit),
+    });
     res.status(200).json(followers);
   } catch (error) {
     console.error(error);
@@ -254,8 +155,68 @@ router.get("/followings", isLoggedIn, async (req, res, next) => {
     if (!user) {
       res.status(403).send("없는 사람을 팔로우 하려고 계시네요.");
     }
-    const followings = await user.getFollowings();
+    const followings = await user.getFollowings({
+      limit: parseInt(req.query.limit),
+    });
     res.status(200).json(followings);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+router.get("/:userId/posts", async (req, res, next) => {
+  // GET /user/1/posts
+  try {
+    let where = { UserId: req.params.userId };
+    if (parseInt(req.query.lastId, 10)) {
+      //초기 로딩이 아닐때
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+    }
+    const posts = await Post.findAll({
+      where,
+      limit: 10,
+      order: [
+        ["createdAt", "DESC"],
+        [Comment, "createdAt", "DESC"],
+      ],
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+          ],
+        },
+        {
+          model: User, // 좋아요 누른 사람
+          as: "Likers",
+          attributes: ["id"],
+        },
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(posts);
   } catch (error) {
     console.error(error);
     next(error);
@@ -305,4 +266,45 @@ router.delete("/follower/:userId", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get("/:userId", async (req, res, next) => {
+  // GET /user/1
+
+  try {
+    const fullUserWithoutPassword = await User.findOne({
+      where: { id: req.params.userId },
+      attributes: {
+        exclude: ["password"],
+      },
+      include: [
+        {
+          model: Post,
+          attributes: ["id"],
+        },
+        {
+          model: User,
+          as: "Followings",
+          attributes: ["id"],
+        },
+        {
+          model: User,
+          as: "Followers",
+          attributes: ["id"],
+        },
+      ],
+    });
+
+    if (fullUserWithoutPassword) {
+      const data = fullUserWithoutPassword.toJSON();
+      data.Posts = data.Posts.length;
+      data.Followers = data.Followers.length;
+      data.Followings = data.Followings.length;
+      res.status(200).json(data);
+    } else {
+      res.status(404).json("존재하지 않는 사용자 입니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 module.exports = router;
