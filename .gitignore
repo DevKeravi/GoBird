@@ -98,11 +98,19 @@ dist
 # Serverless directories
 .serverless/
 /front/build/
+<<<<<<< HEAD
 react-gobird.pem
 react-gobird-aws.pem
 node_modules
 .env
 .next.config.js
+=======
+react-gobrid.pem
+react-gobird-aws.pem
+node_modules
+.env
+.next
+>>>>>>> 8786d593eac96e864e5a0ae3287dd756f5b21112
 
 # FuseBox cache
 .fusebox/
