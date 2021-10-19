@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app",
-    "start": "pm2 start app.js"
+    "start": "cross-env NODE_ENV=production pm2 start app.js"
   },
   "author": "DevKeravi",
   "license": "ISC",
@@ -16,6 +16,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "helmet": "^4.6.0",
+    "hpp": "^0.2.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",
     "mysql2": "^2.3.0",
