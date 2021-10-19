@@ -24,32 +24,37 @@ db.sequelize
     console.log("db 연결 성공");
   })
   .catch(console.error);
+passportConfig();
 
 app.use(
   cors({
-    origin: ["http://localhost:3060", "nodebird.com", "http://3.37.127.146"],
+    origin: "http://cmkrosp.iptime.org:10102",
     credentials: true,
   })
 );
 
-passportConfig();
-
 if (process.env.NODE_ENV === "production") {
   app.use(morgan("combined"));
   app.use(hpp());
-  app.use(helmet());
+  app.use(helmet({ contentSecurityPolicy: false }));
 } else {
   app.use(morgan("dev"));
 }
 app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser("nodebirdsecret"));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({
     saveUnitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      domain:
+        process.env.NODE_ENV === "production" && ".cmkrosp.iptime.org:10102",
+    },
   })
 );
 
@@ -61,6 +66,6 @@ app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/hashtag", hashtagRouter);
 
-app.listen(80, () => {
+app.listen(4000, () => {
   console.log("서버 실행 중");
 });
