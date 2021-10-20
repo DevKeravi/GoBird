@@ -8,7 +8,7 @@ exports.handler = async (event, context, callback) => {
   const Key = decodeURIComponent(event.Records[0].s3.object.key);
   const filename = Key.split("/")[Key.split("/").length - 1];
 
-  const ext = Key.split(".")[Key.split(".").length - 1].toLowerCast();
+  const ext = Key.split(".")[Key.split(".").length - 1].toLowerCase();
 
   const requireFormat = ext === "jpg" ? "jpeg" : ext;
 
