@@ -28,7 +28,7 @@ passportConfig();
 
 app.use(
   cors({
-    origin: "http://cmkrosp.iptime.org:10102",
+    origin: "http://devkeravi.site",
     credentials: true,
   })
 );
@@ -52,8 +52,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: false,
-      domain:
-        process.env.NODE_ENV === "production" && ".cmkrosp.iptime.org:10102",
+      domain: process.env.NODE_ENV === "production" && ".devkeravi.site",
     },
   })
 );
@@ -66,6 +65,6 @@ app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/hashtag", hashtagRouter);
 
-app.listen(4000, () => {
+app.listen(80, () => {
   console.log("서버 실행 중");
 });
