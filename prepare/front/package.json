@@ -7,7 +7,7 @@
     "dev": "NODE_OPTIONS='--inspect' next -p 80",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cross-env ANALYZE=true NODE_ENV=production next build",
-    "start": "cross-env NODE_ENV=production next start -p 10102"
+    "start": "cross-env NODE_ENV=production next start -p 80"
   },
   "author": "Keravi",
   "license": "ISC",
