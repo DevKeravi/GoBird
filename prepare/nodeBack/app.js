@@ -28,7 +28,7 @@ passportConfig();
 
 app.use(
   cors({
-    origin: "http://devkeravi.site",
+    origin: "https://devkeravi.site",
     credentials: true,
   })
 );
@@ -51,7 +51,7 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: true,
       domain: process.env.NODE_ENV === "production" && ".devkeravi.site",
     },
   })
