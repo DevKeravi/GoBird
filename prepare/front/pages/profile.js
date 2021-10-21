@@ -19,11 +19,11 @@ const Profile = () => {
   const [followingsLimit, setFollowingsLimit] = useState(3);
 
   const { data: followersData, error: followerError } = useSWR(
-    `http://localhost:3065/user/followers?limit=${followersLimit}`,
+    `https://api.devkeravi.site/user/followers?limit=${followersLimit}`,
     fetcher
   );
   const { data: followingsData, error: followingError } = useSWR(
-    `http://localhost:3065/user/followings?limit=${followingsLimit}`,
+    `https://api.devkeravi.site/user/followings?limit=${followingsLimit}`,
     fetcher
   );
 

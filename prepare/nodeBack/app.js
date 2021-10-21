@@ -51,6 +51,7 @@ app.use(
     saveUnitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    proxy: ture,
     cookie: {
       httpOnly: true,
       secure: true,
